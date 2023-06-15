@@ -1,100 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estrai colonne da file CSV</title>
-    <link rel="stylesheet" href="./style.css">
-   <div class="container">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg" >
+  <title>FDT | Contabilizzatore</title>
+  <link rel="stylesheet" href="./style.css">
+  <div class="container">
 </head>
 
 <body>
-   <input type="file" id="fileInput" accept=".csv">
-  <label for="fileInput" class="button button-minimal">Scegli file</label>
-    <button class="button button-minimal" onclick="processCSV()">Estrai colonne</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
-        function processCSV() {
-            // Ottiene il file selezionato dall'input
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+  <div class="container">
+    <img src="./FDT.png" class="image-container">
 
-            // Crea un oggetto FileReader per leggere il contenuto del file
-            const reader = new FileReader();
+    <br><br><br>
 
-            // Funzione chiamata quando la lettura del file è completata
-            reader.onload = function(e) {
-                // Ottiene il contenuto del file CSV
-                const csv = e.target.result;
+    <input type="file" id="fileInput" accept=".csv">
 
-                // Utilizza la libreria PapaParse per analizzare il CSV
-                Papa.parse(csv, {
-                    complete: function(results) {
-                        // Array contenente gli indici delle colonne da estrarre
-                        const selectedColumns = [14, 16, 18, 19, 21];
-                        const outputData = [];
+    <button class="buttonC" onclick="processCSV()">Estrai colonne</button>
+  </div>
 
-                        // Itera tutte le righe del CSV
-                        results.data.forEach((row, rowIndex) => {
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script>
+    function processCSV() {
+      // Ottiene il file selezionato dall'input
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-                            const rowData = [];
+      // Crea un oggetto FileReader per leggere il contenuto del file
+      const reader = new FileReader();
 
+      // Funzione chiamata quando la lettura del file è completata
+      reader.onload = function (e) {
+        // Ottiene il contenuto del file CSV
+        const csv = e.target.result;
 
-                            // Estrae i valori delle colonne selezionate per la riga corrente
-                            selectedColumns.forEach(columnIndex => {
-                                const cellValue = row[columnIndex] || '';
-                                rowData.push(cellValue);
-                            });
+        // Utilizza la libreria PapaParse per analizzare il CSV
+        Papa.parse(csv, {
+          complete: function (results) {
+            // Array contenente gli indici delle colonne da estrarre
+            const selectedColumns = [14, 16, 18, 19, 21];
+            const outputData = [];
 
-                          
+            // Itera tutte le righe del CSV
+            results.data.forEach((row, rowIndex) => {
 
+              const rowData = [];
 
-                            // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
-                            if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
-                                rowData.push(row[50]);
-                                rowData.push(row[83]);
-                            }
-                          else                             if (rowIndex === 0) {
-                                rowData.push(row[50]);
-                                rowData.push(row[83]);
-                            }
+              // Estrae i valori delle colonne selezionate per la riga corrente
+              selectedColumns.forEach(columnIndex => {
+                const cellValue = row[columnIndex] || '';
+                rowData.push(cellValue);
+              });
 
-                            // Aggiunge i valori estratti all'array dei dati di output
-                            outputData.push(rowData);
-                        });
+              // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
+              if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
+                rowData.push(row[50]);
+                rowData.push(row[83]);
+              } else if (rowIndex === 0) {
+                rowData.push(row[50]);
+                rowData.push(row[83]);
+              }
 
-                        // Converte i dati di output in un nuovo CSV
-                        const csvContent = Papa.unparse(outputData);
+              // Aggiunge i valori estratti all'array dei dati di output
+              outputData.push(rowData);
+            });
 
-                        // Salva il nuovo CSV in un file
-                        saveCSVFile(csvContent, 'output.csv');
-                    }
-                });
-            };
+            // Crea un nuovo foglio di lavoro XLSX utilizzando i dati di output
+            const worksheet = XLSX.utils.aoa_to_sheet(outputData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Dati');
 
-            // Legge il contenuto del file come testo
-            reader.readAsText(file);
-        }
+            // Esporta il file in formato XLSX
+            const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const data = new Blob([xlsxContent], { type: 'application/octet-stream' });
+            saveFile(data, 'output.xlsx');
+          }
+        });
+      };
 
-        function saveCSVFile(content, fileName) {
-            // Crea un oggetto Blob contenente il contenuto del CSV
-            const data = new Blob([content], { type: 'text/csv' });
+      // Legge il contenuto del file come testo
+      reader.readAsText(file);
+    }
 
-            if (navigator.msSaveBlob) { // Se il browser supporta il metodo msSaveBlob (Internet Explorer)
-                navigator.msSaveBlob(data, fileName); // Salva il file usando msSaveBlob
-            } else {
-                // Altrimenti, crea un link temporaneo per il download del file
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(data);
-                link.setAttribute('download', fileName);
+    function saveFile(content, fileName) {
+      // Crea un oggetto Blob contenente il contenuto del file
+      if (navigator.msSaveBlob) { // Se il browser supporta il metodo msSaveBlob (Internet Explorer)
+        navigator.msSaveBlob(content, fileName); // Salva il file usando msSaveBlob
+      } else {
+        // Altrimenti, crea un link temporaneo per il download del file
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(content);
+        link.setAttribute('download', fileName);
 
-                // Aggiunge il link al documento, lo attiva e lo rimuove successivamente
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-    </script>
+        // Aggiunge il link al documento, lo attiva e lo rimuove successivamente
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+  </script>
 </body>
+
 </html>
