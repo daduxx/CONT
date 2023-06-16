@@ -10,11 +10,13 @@
   <div class="container">
 </head>
 
-<body>
+<body onload="console.log('v1.2')">
 
   <div class="container">
     <img src="./FDT.png" class="image-container">
 
+    <input type="file" id="xlsFile" accept=".xls ,.XLS, .xlsx, .XLSX" />
+    <button onclick="convertXlsToCsv()">XLS >>> CSV</button>
     <br><br><br>
 
     <input type="file" id="fileInput" accept=".csv">
@@ -25,6 +27,52 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
+
+function convertXlsToCsv() {
+      const fileInput = document.getElementById('xlsFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        console.error('Seleziona un file XLS.');
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        let csvContent = '';
+
+        jsonData.forEach(row => {
+          const rowString = row.join(',');
+          csvContent += rowString + '\n';
+        });
+
+        // Create a Blob with the CSV content
+        const csvBlob = new Blob([csvContent], { type: 'text/csv' });
+
+        // Create a download link for the CSV file
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(csvBlob);
+        downloadLink.download = file.name.replace(/\.[^.]+$/, '.csv');
+        downloadLink.click();
+      };
+
+      reader.onerror = function (error) {
+        console.error('Errore durante la lettura del file XLS:', error);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+//---------------------------------------------------------
+
+
     function processCSV() {
       // Ottiene il file selezionato dall'input
       const fileInput = document.getElementById('fileInput');
