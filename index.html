@@ -51,9 +51,29 @@
             const selectedColumns = [14, 16, 18, 19, 21, 5];
             const outputData = [];
 
-            // Itera tutte le righe del CSV
-            results.data.forEach((row, rowIndex) => {
+            const uniqueNumbers = [];
 
+// Itera tutte le righe del CSV
+results.data.forEach((row, rowIndex) => {
+  const column5Value = row[5];
+
+  // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
+  if (uniqueNumbers.includes(column5Value)) {
+    return;
+  }
+
+  // Aggiunge il numero all'array uniqueNumbers
+  uniqueNumbers.push(column5Value);
+});
+
+// Itera tutte le righe del CSV per filtrare i numeri duplicati nella colonna 5
+results.data.forEach((row, rowIndex) => {
+  const column5Value = row[5];
+
+  // Se il numero è già stato filtrato, salta la riga corrente
+  if (!uniqueNumbers.includes(column5Value)) {
+    return;
+  }
               const rowData = [];
 
               // Estrae i valori delle colonne selezionate per la riga corrente
@@ -73,7 +93,11 @@
 
               // Aggiunge i valori estratti all'array dei dati di output
               outputData.push(rowData);
+
+                            // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
+                            uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
             });
+
 
             outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
 
