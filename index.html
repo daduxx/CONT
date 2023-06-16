@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg">
+      <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg" >
   <title>FDT | Contabilizzatore</title>
   <link rel="stylesheet" href="./style.css">
   <div class="container">
@@ -14,9 +14,6 @@
 
   <div class="container">
     <img src="./FDT.png" class="image-container">
-<br><br><br>
-    <input type="file" id="xlsFile" accept=".xls ,.XLS, .xlsx, .XLSX" />
-    <button onclick="convertXlsToCsv()">XLS >>> CSV</button>
     <br><br><br>
 
     <input type="file" id="fileInput" accept=".csv">
@@ -27,50 +24,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    function convertXlsToCsv() {
-      const fileInput = document.getElementById('xlsFile');
-      const file = fileInput.files[0];
-
-      if (!file) {
-        console.error('Seleziona un file XLS.');
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function (event) {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        let csvContent = '';
-
-        jsonData.forEach(row => {
-          const rowString = row.join(',');
-          csvContent += rowString + '\n';
-        });
-
-        // Create a Blob with the CSV content
-        const csvBlob = new Blob([csvContent], { type: 'text/csv' });
-
-        // Create a download link for the CSV file
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(csvBlob);
-        downloadLink.download = file.name.replace(/\.[^.]+$/, '.csv');
-        downloadLink.click();
-      };
-
-      reader.onerror = function (error) {
-        console.error('Errore durante la lettura del file XLS:', error);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    //---------------------------------------------------------
-
     function processCSV() {
       // Ottiene il file selezionato dall'input
       const fileInput = document.getElementById('fileInput');
@@ -84,27 +37,58 @@
         // Ottiene il contenuto del file CSV
         const csv = e.target.result;
 
-        // Modifica la prima riga in "A, B, C"
-        const modifiedCSV = modifyCSV(csv);
+        // Utilizza la libreria PapaParse per analizzare il CSV
+        Papa.parse(csv, {
+          complete: function (results) {
+            // Array contenente gli indici delle colonne da estrarre
+            const selectedColumns = [14, 16, 18, 19, 21, 5];
+            const outputData = [];
 
-        // Crea un oggetto Blob con il contenuto CSV modificato
-        const modifiedBlob = new Blob([modifiedCSV], { type: 'text/csv' });
+            // Itera tutte le righe del CSV
+            results.data.forEach((row, rowIndex) => {
 
-        // Crea un link per il download del file CSV modificato
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(modifiedBlob);
-        downloadLink.download = file.name;
-        downloadLink.click();
+              const rowData = [];
+
+              // Estrae i valori delle colonne selezionate per la riga corrente
+              selectedColumns.forEach(columnIndex => {
+                const cellValue = row[columnIndex] || '';
+                rowData.push(cellValue);
+              });
+
+              
+
+              // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
+              if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
+                rowData.push('TP');
+                rowData.push(row[83]);
+              } else if (rowIndex === 0) {
+                rowData.push(row[50]);
+                rowData.push(row[83]);
+              }
+
+              // Aggiunge i valori estratti all'array dei dati di output
+              outputData.push(rowData);
+            });
+
+            outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
+
+            // Crea un nuovo foglio di lavoro XLSX utilizzando i dati di output
+            const worksheet = XLSX.utils.aoa_to_sheet(outputData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Dati');
+
+            // Esporta il file in formato XLSX
+            const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const data = new Blob([xlsxContent], { type: 'application/octet-stream' });
+            saveFile(data, 'output.xlsx');
+          }
+        });
       };
 
       // Legge il contenuto del file come testo
       reader.readAsText(file);
-    }
 
-    function modifyCSV(csv) {
-      const lines = csv.split('\n');
-      lines[0] = 'vabrsd,vabind,vabcad,vablod,vabprd,vabtic,vabcas'; // Modifica la prima riga con "A, B, C"
-      return lines.join('\n');
+
     }
 
     function saveFile(content, fileName) {
@@ -123,7 +107,6 @@
         document.body.removeChild(link);
       }
     }
-
   </script>
 </body>
 
