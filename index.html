@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg" >
+  <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg">
   <title>FDT | Contabilizzatore</title>
   <link rel="stylesheet" href="./style.css">
   <div class="container">
@@ -16,15 +16,15 @@
     <img src="./FDT.png" class="image-container">
     <br><br><br>
 
-    <input type="file" id="fileInput" accept=".csv">
+    <input type="file" id="fileInput" accept=".xls">
 
-    <button class="buttonC" onclick="processCSV()">Estrai colonne</button>
+    <button class="buttonC" onclick="processXLS()">Estrai colonne</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    function processCSV() {
+    function processXLS() {
       // Ottiene il file selezionato dall'input
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
@@ -34,8 +34,15 @@
 
       // Funzione chiamata quando la lettura del file è completata
       reader.onload = function (e) {
-        // Ottiene il contenuto del file CSV
-        const csv = e.target.result;
+        // Ottiene il contenuto del file XLS
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        // Ottiene il primo foglio di lavoro
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        // Converte il foglio di lavoro in formato CSV
+        const csv = XLSX.utils.sheet_to_csv(worksheet);
 
         // Utilizza la libreria PapaParse per analizzare il CSV
         Papa.parse(csv, {
@@ -55,8 +62,6 @@
                 rowData.push(cellValue);
               });
 
-              
-
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
               if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
                 rowData.push('TP');
@@ -72,23 +77,20 @@
 
             outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
 
-            // Crea un nuovo foglio di lavoro XLSX utilizzando i dati di output
-            const worksheet = XLSX.utils.aoa_to_sheet(outputData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Dati');
+            // Converte l'array dei dati di output in formato CSV
+            const csvOutput = Papa.unparse(outputData);
 
-            // Esporta il file in formato XLSX
-            const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-            const data = new Blob([xlsxContent], { type: 'application/octet-stream' });
-            saveFile(data, 'output.xlsx');
+            // Crea un oggetto Blob contenente il contenuto CSV
+            const blob = new Blob([csvOutput], { type: 'text/csv' });
+
+            // Salva il file CSV
+            saveFile(blob, 'output.csv');
           }
         });
       };
 
-      // Legge il contenuto del file come testo
-      reader.readAsText(file);
-
-
+      // Legge il contenuto del file come array di byte
+      reader.readAsArrayBuffer(file);
     }
 
     function saveFile(content, fileName) {
