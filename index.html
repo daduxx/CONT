@@ -77,14 +77,14 @@
 
             outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
 
-            // Converte l'array dei dati di output in formato CSV
-            const csvOutput = Papa.unparse(outputData);
+            // Converti l'array dei dati di output in un oggetto Workbook
+            const outputWorkbook = XLSX.utils.book_new();
+            const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
+            XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
 
-            // Crea un oggetto Blob contenente il contenuto CSV
-            const blob = new Blob([csvOutput], { type: 'text/csv' });
-
-            // Salva il file CSV
-            saveFile(blob, 'output.csv');
+            // Salva il file XLS
+            const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
+            saveFile(outputBuffer, 'output.xls');
           }
         });
       };
@@ -96,11 +96,11 @@
     function saveFile(content, fileName) {
       // Crea un oggetto Blob contenente il contenuto del file
       if (navigator.msSaveBlob) { // Se il browser supporta il metodo msSaveBlob (Internet Explorer)
-        navigator.msSaveBlob(content, fileName); // Salva il file usando msSaveBlob
+        navigator.msSaveBlob(new Blob([content]), fileName); // Salva il file usando msSaveBlob
       } else {
         // Altrimenti, crea un link temporaneo per il download del file
         const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(content);
+        link.href = URL.createObjectURL(new Blob([content]));
         link.setAttribute('download', fileName);
 
         // Aggiunge il link al documento, lo attiva e lo rimuove successivamente
