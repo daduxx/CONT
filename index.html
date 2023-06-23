@@ -51,8 +51,22 @@
             const selectedColumns = [14, 16, 18, 19, 21, 5];
             const outputData = [];
 
-            const uniqueNumbers = [];
 
+            const uniqueNumbers = [];
+            results.data.forEach((row, rowIndex) => {
+        const columnBIValue = row[61]; // Indice 61 rappresenta la colonna BI
+
+        if (columnBIValue.includes("BRT")) {
+          // Mantieni i dati della riga e applica lo stile "font-weight: bold" alle celle
+          const rowData = row.map((cell, cellIndex) => {
+            return {
+              value: cell,
+              style: (cellIndex === 61) ? 'font-weight: bold' : ''
+            };
+          });
+          outputData.push(rowData);
+        }
+      });
 // Itera tutte le righe del CSV
 results.data.forEach((row, rowIndex) => {
   const column5Value = row[5];
