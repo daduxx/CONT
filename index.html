@@ -7,11 +7,10 @@
   <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg">
   <title>FDT | Contabilizzatore</title>
   <link rel="stylesheet" href="./style.css">
-  <div class="container">
 </head>
 
 <body>
-
+v6.23
   <div class="container">
     <img src="./FDT.png" class="image-container">
     <br><br><br>
@@ -25,6 +24,9 @@
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     function processXLS() {
+
+      const uniqueNumbers = [];
+
       // Ottiene il file selezionato dall'input
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
@@ -52,22 +54,8 @@
             const outputData = [];
 
 
-            const uniqueNumbers = [];
-            results.data.forEach((row, rowIndex) => {
-        const columnBIValue = row[61]; // Indice 61 rappresenta la colonna BI
 
-        if (columnBIValue.includes("BRT")) {
-          // Mantieni i dati della riga e applica lo stile "font-weight: bold" alle celle
-          const rowData = row.map((cell, cellIndex) => {
-            return {
-              value: cell,
-              style: (cellIndex === 61) ? 'font-weight: bold' : ''
-            };
-          });
-          outputData.push(rowData);
-        }
-      });
-// Itera tutte le righe del CSV
+            // Itera tutte le righe del CSV
 results.data.forEach((row, rowIndex) => {
   const column5Value = row[5];
 
@@ -80,38 +68,69 @@ results.data.forEach((row, rowIndex) => {
   uniqueNumbers.push(column5Value);
 });
 
-// Itera tutte le righe del CSV per filtrare i numeri duplicati nella colonna 5
+
+// Itera tutte le righe del CSV
 results.data.forEach((row, rowIndex) => {
   const column5Value = row[5];
+  const columnBEValue = row[56]; // Indice della colonna "BE" (contando da 0)
 
-  // Se il numero è già stato filtrato, salta la riga corrente
-  if (!uniqueNumbers.includes(column5Value)) {
+
+    // Se il numero è già stato filtrato, salta la riga corrente
+    if (!uniqueNumbers.includes(column5Value)) {
     return;
   }
-              const rowData = [];
 
-              // Estrae i valori delle colonne selezionate per la riga corrente
-              selectedColumns.forEach(columnIndex => {
-                const cellValue = row[columnIndex] || '';
-                rowData.push(cellValue);
-              });
+  const rowData = [];
+
+  // Estrae i valori delle colonne selezionate per la riga corrente
+  selectedColumns.forEach(columnIndex => {
+    const cellValue = row[columnIndex] || '';
+    rowData.push(cellValue);
+  });
 
 
-              // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
-              if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
-                rowData.push('TP');
-                rowData.push(row[83]);
-              } else if (rowIndex === 0) {
-                rowData.push(row[50]);
-                rowData.push(row[83]);
-              }
 
-              // Aggiunge i valori estratti all'array dei dati di output
-              outputData.push(rowData);
+  // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
+  if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
+    rowData.push('TP');
+    rowData.push(row[83]);
+    if (columnBEValue === "FRANCO") {
+    rowData.push(4);
+  }
+  else if (columnBEValue === "ASSEGNATO"){
+    rowData.push(6);
+  }
+  } else if (rowIndex === 0) {
+    rowData.push(row[50]);
+    rowData.push(row[83]);
+  }
+  else {
+    rowData.push(' ');
+    rowData.push(' ');
+
+      // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
+  if (columnBEValue === "FRANCO") {
+    rowData.push(1);
+  }   // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
+  else if (columnBEValue === "ASSEGNATO") {
+    rowData.push(2);
+  } else {
+    rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
+  }
+  }
+
+
+
+  rowData.push('000');
+ 
+  // Aggiunge i valori estratti all'array dei dati di output
+  outputData.push(rowData);
+
 
                             // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
                             uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
-            });
+                            
+});
 
 
             outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
@@ -148,6 +167,7 @@ results.data.forEach((row, rowIndex) => {
         document.body.removeChild(link);
       }
     }
+  
   </script>
 </body>
 
