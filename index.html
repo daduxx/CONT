@@ -96,6 +96,7 @@ results.data.forEach((row, rowIndex) => {
                 rowData.push(cellValue);
               });
 
+
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
               if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
                 rowData.push('TP');
