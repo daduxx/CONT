@@ -53,87 +53,86 @@ v6.23
             const selectedColumns = [14, 16, 18, 19, 21, 5];
             const outputData = [];
 
-
+            // Aggiungi riga vuota
+            outputData.push([]);
 
             // Itera tutte le righe del CSV
-results.data.forEach((row, rowIndex) => {
-  const column5Value = row[5];
+            results.data.forEach((row, rowIndex) => {
+              const column5Value = row[5];
 
-  // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
-  if (uniqueNumbers.includes(column5Value)) {
-    return;
-  }
+              // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
+              if (uniqueNumbers.includes(column5Value)) {
+                return;
+              }
 
-  // Aggiunge il numero all'array uniqueNumbers
-  uniqueNumbers.push(column5Value);
-});
+              // Aggiunge il numero all'array uniqueNumbers
+              uniqueNumbers.push(column5Value);
+            });
 
+            // Sposta tutte le righe di 1 in basso
+            for (let i = results.data.length - 1; i > 0; i--) {
+              results.data[i] = results.data[i - 1];
+            }
 
-// Itera tutte le righe del CSV
-results.data.forEach((row, rowIndex) => {
-  const column5Value = row[5];
-  const columnBEValue = row[56]; // Indice della colonna "BE" (contando da 0)
+            // Rinomina la prima riga
+            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
 
+            // Itera tutte le righe del CSV
+            results.data.forEach((row, rowIndex) => {
+              const column5Value = row[5];
+              const columnBEValue = row[56]; // Indice della colonna "BE" (contando da 0)
 
-    // Se il numero è già stato filtrato, salta la riga corrente
-    if (!uniqueNumbers.includes(column5Value)) {
-    return;
-  }
+              // Se il numero è già stato filtrato, salta la riga corrente
+              if (!uniqueNumbers.includes(column5Value) || !(row[60].includes("BRT"))) {
+                return;
+              }
 
-  const rowData = [];
+              const rowData = [];
 
-  // Estrae i valori delle colonne selezionate per la riga corrente
-  selectedColumns.forEach(columnIndex => {
-    const cellValue = row[columnIndex] || '';
-    rowData.push(cellValue);
-  });
+              // Estrae i valori delle colonne selezionate per la riga corrente
+              selectedColumns.forEach(columnIndex => {
+                const cellValue = row[columnIndex] || '';
+                rowData.push(cellValue);
+              });
 
+              // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
+              if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
+                rowData.push('TP');
+                rowData.push(row[83]);
+                if (columnBEValue === "FRANCO") {
+                  rowData.push(4);
+                } else if (columnBEValue === "ASSEGNATO") {
+                  rowData.push(6);
+                }
+              } else if (rowIndex === 0) {
+                rowData.push(row[50]);
+                rowData.push(row[83]);
+              } else {
+                rowData.push(' ');
+                rowData.push('');
 
+                // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
+                if (columnBEValue === "FRANCO") {
+                  rowData.push(1);
+                }
+                // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
+                else if (columnBEValue === "ASSEGNATO") {
+                  rowData.push(2);
+                } else {
+                  rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
+                }
+              }
 
-  // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
-  if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
-    rowData.push('TP');
-    rowData.push(row[83]);
-    if (columnBEValue === "FRANCO") {
-    rowData.push(4);
-  }
-  else if (columnBEValue === "ASSEGNATO"){
-    rowData.push(6);
-  }
-  } else if (rowIndex === 0) {
-    rowData.push(row[50]);
-    rowData.push(row[83]);
-  }
-  else {
-    rowData.push(' ');
-    rowData.push(' ');
+              rowData.push('000');
 
-      // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
-  if (columnBEValue === "FRANCO") {
-    rowData.push(1);
-  }   // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
-  else if (columnBEValue === "ASSEGNATO") {
-    rowData.push(2);
-  } else {
-    rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
-  }
-  }
+              // Aggiunge i valori estratti all'array dei dati di output
+              outputData.push(rowData);
 
+              // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
+              uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
 
-
-  rowData.push('000');
- 
-  // Aggiunge i valori estratti all'array dei dati di output
-  outputData.push(rowData);
-
-
-                            // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
-                            uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
-                            
-});
-
-
-            outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
+              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
+            });
 
             // Converti l'array dei dati di output in un oggetto Workbook
             const outputWorkbook = XLSX.utils.book_new();
@@ -167,8 +166,8 @@ results.data.forEach((row, rowIndex) => {
         document.body.removeChild(link);
       }
     }
-  
   </script>
 </body>
 
 </html>
+
