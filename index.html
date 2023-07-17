@@ -10,7 +10,6 @@
 </head>
 
 <body>
-v6.23
   <div class="container">
     <img src="./FDT.png" class="image-container">
     <br><br><br>
@@ -84,7 +83,7 @@ v6.23
               const columnBEValue = row[56]; // Indice della colonna "BE" (contando da 0)
 
               // Se il numero è già stato filtrato, salta la riga corrente
-              if (!uniqueNumbers.includes(column5Value) || !(row[60].includes("BRT"))) {
+              if (!uniqueNumbers.includes(column5Value) || !(row[0].includes("BRT"))) {
                 return;
               }
 
