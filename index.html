@@ -50,7 +50,7 @@ v6.23
         Papa.parse(csv, {
           complete: function (results) {
             // Array contenente gli indici delle colonne da estrarre
-            const selectedColumns = [14, 16, 18, 19, 21, 5];
+            const selectedColumns = [7, 9, 10, 11, 12, 4, 6, 5, 21, 17, 20, 15, 14];
             const outputData = [];
 
             // Aggiungi riga vuota
@@ -75,7 +75,7 @@ v6.23
             }
 
             // Rinomina la prima riga
-            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
+            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
@@ -96,20 +96,20 @@ v6.23
               });
 
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
-              if (rowIndex !== 0 && row[50] === "CONTRASSEGNO") {
+              if (rowIndex !== 0 && row[6] === "CONTRASSEGNO") {
                 rowData.push('TP');
-                rowData.push(row[83]);
+                rowData.push(row[5]);
                 if (columnBEValue === "FRANCO") {
                   rowData.push(4);
                 } else if (columnBEValue === "ASSEGNATO") {
                   rowData.push(6);
                 }
               } else if (rowIndex === 0) {
-                rowData.push(row[50]);
-                rowData.push(row[83]);
+                rowData.push(row[6]);
+                rowData.push(row[5]);
               } else {
                 rowData.push(' ');
-                rowData.push('');
+                rowData.push(' ');
 
                 // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
                 if (columnBEValue === "FRANCO") {
@@ -131,7 +131,7 @@ v6.23
               // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
               uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
 
-              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl'];
+              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
             });
 
             // Converti l'array dei dati di output in un oggetto Workbook
