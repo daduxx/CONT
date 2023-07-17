@@ -22,7 +22,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 17.07.105');
+console.log('version 17.07.105');
 function processXLS() {
   const uniqueNumbers = [];
 
@@ -98,27 +98,25 @@ function processXLS() {
           // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
           if (rowIndex !== 0) {
             if (column6Value === "CONTRASSEGNO") {
-              rowData.push('TP');
-              rowData.push(row[5]);
-            } else {
-              rowData.push('');
-              rowData.push('');
+              rowData[6] = 'TP';
+              rowData[7] = row[5];
+              if (columnBEValue === "FRANCO") {
+                rowData[9] = 4;
+              } else if (columnBEValue === "ASSEGNATO") {
+                rowData[9] = 6;
+              }
             }
+            else if (columnBEValue === "FRANCO") {
+                rowData[9] = 1;
+              } else if (columnBEValue === "ASSEGNATO") {
+                rowData[9] = 2;
+              }
           } else {
-            rowData.push(column6Value);
-            rowData.push(row[5]);
+            rowData[6] = column6Value;
+            rowData[7] = row[5];
           }
 
-          // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
-          if (columnBEValue === "FRANCO") {
-            rowData.push(1);
-          }
-          // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
-          else if (columnBEValue === "ASSEGNATO") {
-            rowData.push(2);
-          } else {
-            rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
-          }
+
 
           // Aggiunge i valori estratti all'array dei dati di output
           outputData.push(rowData);
@@ -161,6 +159,7 @@ function saveFile(content, fileName) {
     document.body.removeChild(link);
   }
 }
+
   </script>
 </body>
 
