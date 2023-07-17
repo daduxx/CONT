@@ -22,7 +22,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 17.07.958');
+    console.log('version 17.07.104');
     function processXLS() {
 
       const uniqueNumbers = [];
@@ -58,7 +58,7 @@
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
-              const column5Value = row[5];
+              const column5Value = row[4];
 
               // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
               if (uniqueNumbers.includes(column5Value)) {
@@ -80,7 +80,6 @@
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
               const column5Value = row[5];
-              const columnBEValue = row[56]; // Indice della colonna "BE" (contando da 0)
 
               // Se il numero è già stato filtrato, salta la riga corrente
               if (!uniqueNumbers.includes(column5Value) || !(row[0].includes("BRT"))) {
