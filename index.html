@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,162 +7,134 @@
   <title>FDT | Contabilizzatore</title>
   <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
   <div class="container">
     <img src="./FDT.png" class="image-container">
     <br><br><br>
-
     <input type="file" id="fileInput" accept=".xls">
-
     <button class="buttonC" onclick="processXLS()">Estrai colonne</button>
   </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 17.07.1010');
-    function processXLS() {
+console.log('version 17.07.1020');
 
-      const uniqueNumbers = [];
+function processXLS() {
+  const uniqueNumbers = [];
+  // Ottiene il file selezionato dall'input
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+  // Crea un oggetto FileReader per leggere il contenuto del file
+  const reader = new FileReader();
+  // Funzione chiamata quando la lettura del file è completata
+  reader.onload = function (e) {
+    // Ottiene il contenuto del file XLS
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    // Ottiene il primo foglio di lavoro
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    // Converte il foglio di lavoro in formato CSV
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
+    // Utilizza la libreria PapaParse per analizzare il CSV
+    Papa.parse(csv, {
+      complete: function (results) {
+        // Array contenente gli indici delle colonne da estrarre
+        const selectedColumns = [7, 9, 10, 11, 12, 4, 6, 5, 21, 17, 20, 15, 14];
+        const outputData = [];
+        // Aggiungi riga vuota
+        outputData.push([]);
 
-      // Ottiene il file selezionato dall'input
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
+        // Itera tutte le righe del CSV
+        results.data.forEach((row, rowIndex) => {
+          const column5Value = row[5];
+          const column4Value = row[4];
 
-      // Crea un oggetto FileReader per leggere il contenuto del file
-      const reader = new FileReader();
-
-      // Funzione chiamata quando la lettura del file è completata
-      reader.onload = function (e) {
-        // Ottiene il contenuto del file XLS
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        // Ottiene il primo foglio di lavoro
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-        // Converte il foglio di lavoro in formato CSV
-        const csv = XLSX.utils.sheet_to_csv(worksheet);
-
-        // Utilizza la libreria PapaParse per analizzare il CSV
-        Papa.parse(csv, {
-          complete: function (results) {
-            // Array contenente gli indici delle colonne da estrarre
-            const selectedColumns = [7, 9, 10, 11, 12, 4, 6, 5, 21, 17, 20, 15, 14];
-            const outputData = [];
-
-            // Aggiungi riga vuota
-            outputData.push([]);
-
-            // Itera tutte le righe del CSV
-            results.data.forEach((row, rowIndex) => {
-              const column5Value = row[4];
-
-              // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
-              if (uniqueNumbers.includes(column5Value)) {
-                return;
-              }
-
-              // Aggiunge il numero all'array uniqueNumbers
-              uniqueNumbers.push(column5Value);
-            });
-
-            // Sposta tutte le righe di 1 in basso
-            for (let i = results.data.length - 1; i > 0; i--) {
-              results.data[i] = results.data[i - 1];
-            }
-
-            // Rinomina la prima riga
-            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
-
-            // Itera tutte le righe del CSV
-            results.data.forEach((row, rowIndex) => {
-              const column5Value = row[5];
-
-              // Se il numero è già stato filtrato, salta la riga corrente
-              if (!uniqueNumbers.includes(column5Value) || !(row[0].includes("BRT"))) {
-                return;
-              }
-
-              const rowData = [];
-
-              // Estrae i valori delle colonne selezionate per la riga corrente
-              selectedColumns.forEach(columnIndex => {
-                const cellValue = row[columnIndex] || '';
-                rowData.push(cellValue);
-              });
-
-              // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
-              if (rowIndex !== 0 && row[6] === "CONTRASSEGNO") {
-                rowData.push('TP');
-                rowData.push(row[5]);
-                if (row[17] === "FRANCO") {
-                  rowData.push(4);
-                } else if (row[17] === "ASSEGNATO") {
-                  rowData.push(6);
-                }
-              } else if (rowIndex === 0) {
-                rowData.push(row[6]);
-                rowData.push(row[5]);
-              } else {
-                rowData.push(' ');
-                rowData.push(' ');
-
-                // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
-                if (row[17] === "FRANCO") {
-                  rowData.push(1);
-                }
-                // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
-                else if (row[17] === "ASSEGNATO") {
-                  rowData.push(2);
-                } else {
-                  rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
-                }
-              }
-
-              // Aggiunge i valori estratti all'array dei dati di output
-              outputData.push(rowData);
-
-              // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
-              uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
-
-              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
-            });
-
-            // Converti l'array dei dati di output in un oggetto Workbook
-            const outputWorkbook = XLSX.utils.book_new();
-            const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
-            XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
-
-            // Salva il file XLS
-            const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
-            saveFile(outputBuffer, 'output.xls');
+          // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
+          if (uniqueNumbers.includes(column5Value)) {
+            return;
           }
+          // Aggiunge il numero all'array uniqueNumbers
+          uniqueNumbers.push(column5Value);
         });
-      };
+        // Sposta tutte le righe di 1 in basso
+        for (let i = results.data.length - 1; i > 0; i--) {
+          results.data[i] = results.data[i - 1];
+        }
+        // Rinomina la prima riga
+        results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
+        // Itera tutte le righe del CSV
+        results.data.forEach((row, rowIndex) => {
+          const column5Value = row[5];
+          const columnBEValue = row[17]; // Indice della colonna "BE" (contando da 0)
 
-      // Legge il contenuto del file come array di byte
-      reader.readAsArrayBuffer(file);
-    }
-
-    function saveFile(content, fileName) {
-      // Crea un oggetto Blob contenente il contenuto del file
-      if (navigator.msSaveBlob) { // Se il browser supporta il metodo msSaveBlob (Internet Explorer)
-        navigator.msSaveBlob(new Blob([content]), fileName); // Salva il file usando msSaveBlob
-      } else {
-        // Altrimenti, crea un link temporaneo per il download del file
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(new Blob([content]));
-        link.setAttribute('download', fileName);
-
-        // Aggiunge il link al documento, lo attiva e lo rimuove successivamente
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+          const rowData = [];
+          // Estrae i valori delle colonne selezionate per la riga corrente
+          selectedColumns.forEach(columnIndex => {
+            const cellValue = row[columnIndex] || '';
+            rowData.push(cellValue);
+          });
+          // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
+          if (rowIndex !== 0 && row[6] === "CONTRASSEGNO") {
+            rowData.push('TP');
+            rowData.push(row[5]);
+            if (columnBEValue === "FRANCO") {
+              rowData.push(4);
+            } else if (columnBEValue === "ASSEGNATO") {
+              rowData.push(6);
+            }
+          } else if (rowIndex === 0) {
+            rowData.push(row[6]);
+            rowData.push(row[5]);
+          } else {
+            rowData.push(' ');
+            rowData.push(' ');
+            // Aggiunge il valore 1 se nella colonna "BE" è presente "FRANCO" in maiuscolo
+            if (columnBEValue === "FRANCO") {
+              rowData.push(1);
+            }
+            // Aggiunge il valore 2 se nella colonna "BE" è presente "ASSEGNATO" in maiuscolo
+            else if (columnBEValue === "ASSEGNATO") {
+              rowData.push(2);
+            } else {
+              rowData.push(''); // Aggiungi un valore vuoto se nessuna delle condizioni è soddisfatta
+            }
+          }
+          // Aggiunge i valori estratti all'array dei dati di output
+          outputData.push(rowData);
+          // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
+          uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
+          outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
+        });
+        // Converti l'array dei dati di output in un oggetto Workbook
+        const outputWorkbook = XLSX.utils.book_new();
+        const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
+        XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
+        // Salva il file XLS
+        const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
+        saveFile(outputBuffer, 'output.xls');
       }
-    }
+    });
+  };
+  // Legge il contenuto del file come array di byte
+  reader.readAsArrayBuffer(file);
+}
+
+function saveFile(content, fileName) {
+  // Crea un oggetto Blob contenente il contenuto del file
+  if (navigator.msSaveBlob) { // Se il browser supporta il metodo msSaveBlob (Internet Explorer)
+    navigator.msSaveBlob(new Blob([content]), fileName); // Salva il file usando msSaveBlob
+  } else {
+    // Altrimenti, crea un link temporaneo per il download del file
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([content]));
+    link.setAttribute('download', fileName);
+    // Aggiunge il link al documento, lo attiva e lo rimuove successivamente
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
   </script>
 </body>
-
 </html>
