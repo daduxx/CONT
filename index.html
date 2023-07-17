@@ -28,7 +28,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 17.07.1540');
+    console.log('version 17.07.1607');
 
     function processFile() {
       const uniqueNumbers = [];
@@ -81,7 +81,7 @@
             }
 
             // Rinomina la prima riga
-            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
+            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc', 'vabctr'];
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
@@ -103,6 +103,8 @@ selectedColumns.forEach(columnIndex => {
   }
   rowData.push(cellValue);
 });
+
+              
 
 
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
@@ -129,6 +131,7 @@ selectedColumns.forEach(columnIndex => {
                 rowData[6] = column6Value;
                 rowData[7] = row[5];
               }
+              rowData.push('000');
 
               // Aggiunge i valori estratti all'array dei dati di output
               outputData.push(rowData);
@@ -136,7 +139,7 @@ selectedColumns.forEach(columnIndex => {
               // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
               uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
 
-              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc'];
+              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc', 'vabctr'];
             });
 
             // Ottiene il formato di esportazione selezionato
