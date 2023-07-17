@@ -22,7 +22,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-console.log('version 17.07.105');
+console.log('version 17.07.1045');
 function processXLS() {
   const uniqueNumbers = [];
 
@@ -108,8 +108,12 @@ function processXLS() {
             }
             else if (columnBEValue === "FRANCO") {
                 rowData[9] = 1;
+                rowData[6] = '';
+                rowData[7] = '';
               } else if (columnBEValue === "ASSEGNATO") {
                 rowData[9] = 2;
+                rowData[6] = '';
+                rowData[7] = '';
               }
           } else {
             rowData[6] = column6Value;
