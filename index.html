@@ -96,11 +96,14 @@
 
               const rowData = [];
 
-              // Estrae i valori delle colonne selezionate per la riga corrente
-              selectedColumns.forEach(columnIndex => {
-                const cellValue = row[columnIndex] || '';
-                rowData.push(cellValue);
-              });
+selectedColumns.forEach(columnIndex => {
+  let cellValue = row[columnIndex] || '';
+  if (columnIndex === 20 || columnIndex === 21) {
+    cellValue = parseInt(cellValue, 10);
+  }
+  rowData.push(cellValue);
+});
+
 
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
               if (rowIndex !== 0) {
