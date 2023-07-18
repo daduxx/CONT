@@ -22,13 +22,121 @@
       <option value="csv">CSV</option>
     </select>
 
-    <button class="buttonC" onclick="processFile()">Estrai colonne</button>
+    <button class="buttonC" onclick="processFile()">BRT</button>
+    <button class="buttonC" onclick="DHL()">DHL</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     console.log('version 17.07.1607');
+    function DHL() {
+  const fieldOrder = ['x', 9, 10, 12, 'x', 'x', 15, 'x', 22, 'x', 6, 'x', 'x', 19, 21, 16];
+
+  const uniqueNumbers = [];
+
+  // Ottiene il file selezionato dall'input
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+
+  // Crea un oggetto FileReader per leggere il contenuto del file
+  const reader = new FileReader();
+
+  // Funzione chiamata quando la lettura del file è completata
+  reader.onload = function (e) {
+    // Ottiene il contenuto del file XLS
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    // Ottiene il primo foglio di lavoro
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    // Converte il foglio di lavoro in formato CSV
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
+
+    // Utilizza la libreria PapaParse per analizzare il CSV
+    Papa.parse(csv, {
+      complete: function (results) {
+        const outputData = [];
+
+        // Itera tutte le righe del CSV
+        results.data.forEach((row, rowIndex) => {
+          const column5Value = row[5];
+
+          // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
+          if (uniqueNumbers.includes(column5Value)) {
+            return;
+          }
+
+          // Aggiunge il numero all'array uniqueNumbers
+          uniqueNumbers.push(column5Value);
+        });
+
+        // Aggiungi riga vuota
+        outputData.push([]);
+
+        // Itera tutte le righe del CSV
+        results.data.forEach((row, rowIndex) => {
+          const column0Value = row[0];
+
+          if (column0Value !== 'GENERAL LOGISTICS SYSTEMS') {
+            return; // Salta la riga se il valore nella colonna 0 non è "GENERAL LOGISTICS SYSTEMS"
+          }
+
+          const rowData = [];
+
+          fieldOrder.forEach(field => {
+            let cellValue = '';
+
+            if (field === 'x') {
+              cellValue = '';
+            } else {
+              const columnIndex = field - 1; // Indice della colonna corrispondente (contando da 0)
+              cellValue = row[columnIndex] || '';
+            }
+
+            rowData.push(cellValue);
+          });
+
+          // Aggiunge i valori estratti all'array dei dati di output
+          outputData.push(rowData);
+
+          // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
+          uniqueNumbers.splice(uniqueNumbers.indexOf(row[5]), 1);
+
+          outputData[0] = ['REFERENTE', ' ', ' ', ' ', 'CODICE NAZIONE (IT CE EN)', 'CODICE TELEFONO NAZIONE (+39 +41)', ' ', 'CODICE CLIENTE', ' ', 'VALUTA VALORE DICHIARATO', ' ', 'CODICE PRODOTTO', 'RIEPILOGO/DESCRIZIONE ORDINE', ' ', ' ', ' ', ];
+        });
+
+        // Ottiene il formato di esportazione selezionato
+        const exportFormat = document.getElementById('fileFormat').value;
+
+        if (exportFormat === 'xls') {
+          // Converti l'array dei dati di output in un oggetto Workbook
+          const outputWorkbook = XLSX.utils.book_new();
+          const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
+          XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
+
+          // Salva il file XLS
+          const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
+          saveFile(outputBuffer, 'output.xls');
+        } else if (exportFormat === 'csv') {
+          // Converti l'array dei dati di output in formato CSV
+          const csvContent = Papa.unparse(outputData);
+
+          // Salva il file CSV
+          saveFile(csvContent, 'output.csv');
+        }
+      }
+    });
+  };
+
+  // Legge il contenuto del file come array di byte
+  reader.readAsArrayBuffer(file);
+}
+
+
+
+
 
     function processFile() {
       const uniqueNumbers = [];
