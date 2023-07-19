@@ -29,9 +29,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 19.07.1602');
+    console.log('version 19.07.1643');
     function DHL() {
-  const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 'x', 22, 2, 6, 1, 'x', 19, 21, 16, 11, 4, 4, 4, 3];
+  const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 'x', 22, 2, 6, 1, 7, 19, 21, 16, 11, 4, 4, 4, 3];
 
   const uniqueNumbers = [];
 
@@ -129,6 +129,10 @@
                 cellValue = 'G';
               }
 
+              if (field === 7 && cellValue) {
+                cellValue = '106968952';
+              }
+
               if (field === 2 && cellValue) {
                 cellValue = 'EUR';
               }
@@ -139,6 +143,22 @@
 
               if (field === 4 && cellValue) {
                 cellValue = 60;
+              }
+
+              if (field === 15 && cellValue == '') {
+                cellValue = '0000000000';
+              }
+
+              if (field === 21 && cellValue) {
+                cellValue = parseInt(cellValue);
+              }
+
+              if (field === 22 && cellValue) {
+                cellValue = parseInt(cellValue);
+              }
+
+              if (field === 16 && cellValue.includes(';')) {
+                cellValue = cellValue.split(';')[0];
               }
 
             }
