@@ -29,7 +29,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 17.07.1607');
+    console.log('version 19.07.1036');
     function DHL() {
   const fieldOrder = ['x', 9, 10, 12, 'x', 'x', 15, 'x', 22, 'x', 6, 'x', 'x', 19, 21, 16];
 
@@ -79,19 +79,25 @@
         results.data.forEach((row, rowIndex) => {
           const column0Value = row[0];
 
-          if (column0Value !== 'GENERAL LOGISTICS SYSTEMS') {
+          if (column0Value !== 'DHL EXPRESS (ITALY) SRL') {
             return; // Salta la riga se il valore nella colonna 0 non è "GENERAL LOGISTICS SYSTEMS"
           }
 
           const rowData = [];
 
-          fieldOrder.forEach(field => {
+          fieldOrder.forEach((field, index) => {
             let cellValue = '';
 
             if (field === 'x') {
               cellValue = '';
             } else {
               const columnIndex = field - 1; // Indice della colonna corrispondente (contando da 0)
+
+              if (field === 15 && row[index] && row[index].startsWith('+')) {
+                const nextFieldValue = '+' + row[index].substring(1, 3);
+                rowData[fieldOrder.indexOf('x')] = nextFieldValue; // Aggiungi il valore modificato al campo precedente (x)
+              }
+
               cellValue = row[columnIndex] || '';
             }
 
@@ -133,6 +139,7 @@
   // Legge il contenuto del file come array di byte
   reader.readAsArrayBuffer(file);
 }
+
 
 
 
