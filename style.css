@@ -42,6 +42,18 @@
             transition: background-color 0.8s ease;
         }
 
+        .buttonD {
+            background-color: #f1c232;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.8s ease;
+        }
+
         button:hover {
             background-color: #383838;
         }
