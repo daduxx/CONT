@@ -10,6 +10,7 @@
 </head>
 
 <body>
+version 19.07 - 09:30
   <div class="container">
     <img src="./FDT.png" class="image-container">
     <br><br><br>
@@ -21,7 +22,7 @@
       <option value="xls">XLS</option>
       <option value="csv">CSV</option>
     </select>
-<br><br>
+    <br><br>
     <button class="buttonC" onclick="processFile()">BRT</button>
     <button class="buttonD" onclick="DHL()">DHL</button>
   </div>
@@ -29,7 +30,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 20.07.0851');
+    console.log('version 19.07.0930');
     function DHL() {
       const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 4, 4, 4, 3];
 
@@ -160,6 +161,17 @@
                   if (field === 16 && cellValue.includes(';')) {
                     cellValue = cellValue.split(';')[0];
                   }
+
+                  if (field === 15 && cellValue.includes(')')) {
+                    const indexOfClosingParenthesis = cellValue.indexOf(')');
+                    cellValue = cellValue.substring(indexOfClosingParenthesis + 1);
+                  }
+                  else if (field === 15 && cellValue.includes('+')) {
+                    const indexOfPlus = cellValue.indexOf('+');
+                    cellValue = cellValue.substring(0, indexOfPlus) + cellValue.substring(indexOfPlus + 3);
+                  }
+
+
 
                 }
 
