@@ -36,7 +36,7 @@
   <script>
     console.log('version 19.07.0930');
     function DHL() {
-      const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 4, 4, 4, 3, 5];
+      const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 18, 4, 4, 3, 5];
 
       const uniqueNumbers = [];
 
@@ -147,6 +147,10 @@
                   }
 
                   if (field === 4 && cellValue) {
+                    cellValue = 40;
+                  }
+
+                  if (field === 18 && cellValue) {
                     cellValue = 60;
                   }
 
