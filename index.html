@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+  version 19.07 - 11:16
   <div class="container">
     <img src="./FDT.png" class="image-container">
     <br><br><br>
@@ -25,8 +25,6 @@
     <br><br>
     <button class="buttonC" onclick="processFile()">BRT</button>
     <button class="buttonD" onclick="DHL()">DHL</button>
-    <br><br>
-        version 19.07 - 09:30
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -265,13 +263,8 @@
               uniqueNumbers.push(column5Value);
             });
 
-            // Sposta tutte le righe di 1 in basso
-            for (let i = results.data.length - 1; i > 0; i--) {
-              results.data[i] = results.data[i - 1];
-            }
 
-            // Rinomina la prima riga
-            results.data[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc', 'vabctr'];
+
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
@@ -321,7 +314,22 @@
                 rowData[6] = column6Value;
                 rowData[7] = row[5];
               }
+
+              rowData[5] = parseInt(rowData[5]);
+
+              if (rowData[7] !== '') {
+                rowData[7] = parseFloat(rowData[7]);
+              }
+              else {
+                rowData[7] = '';
+              }
+
+
+
               rowData.push('000');
+              rowData.push('C');
+              rowData.push('EUR');
+
 
               // Aggiunge i valori estratti all'array dei dati di output
               outputData.push(rowData);
@@ -329,7 +337,7 @@
               // Rimuove il numero dall'array uniqueNumbers per evitare duplicati successivi
               uniqueNumbers.splice(uniqueNumbers.indexOf(column5Value), 1);
 
-              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc', 'vabctr'];
+              outputData[0] = ['vabrsd', 'vabind', 'vabcad', 'vablod', 'vabprd', 'vabrmn', 'vabtic', 'vabcas', 'vabpkb', 'vabcbo', 'vabncl', 'vabemd', 'vabtrc', 'vabctr', 'vabtsp', 'vabvas'];
             });
 
             // Ottiene il formato di esportazione selezionato
