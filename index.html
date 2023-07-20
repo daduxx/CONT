@@ -15,190 +15,190 @@
     <br><br><br>
 
     <input type="file" id="fileInput" accept=".xls">
-<br><br>
+    <br><br>
     <label for="fileFormat">Seleziona il formato di esportazione:</label>
     <select id="fileFormat">
       <option value="xls">XLS</option>
       <option value="csv">CSV</option>
     </select>
-
+<br><br>
     <button class="buttonC" onclick="processFile()">BRT</button>
-    <button class="buttonC" onclick="DHL()">DHL</button>
+    <button class="buttonD" onclick="DHL()">DHL</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    console.log('version 19.07.1656');
+    console.log('version 20.07.0851');
     function DHL() {
-  const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 4, 4, 4, 3];
+      const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 4, 4, 4, 3];
 
-  const uniqueNumbers = [];
+      const uniqueNumbers = [];
 
-  // Array dei codici delle nazioni dell'Unione Europea
-  const euCountryCodes = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'];
+      // Array dei codici delle nazioni dell'Unione Europea
+      const euCountryCodes = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'];
 
-  // Array dei codici telefonici delle nazioni dell'Unione Europea
-  const euCountryPhoneCodes = ['43', '32', '359', '385', '357', '420', '45', '372', '358', '33', '49', '30', '36', '353', '39', '371', '370', '352', '356', '31', '48', '351', '40', '421', '386', '34', '46'];
-
-
-
-  const CountryCodes = ['AL', 'AD', 'AM', 'AT', 'AZ', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'GE', 'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'KZ', 'XK', 'LV', 'LI', 'LT', 'LU', 'MK', 'MT', 'MD', 'MC', 'ME', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SK', 'SI', 'ES', 'SE', 'CH', 'TR', 'UA', 'GB', 'VA'];
-  const CountryPhoneCodes = ['355', '376', '374', '43', '994', '375', '32', '387', '359', '385', '357', '420', '45', '372', '358', '33', '995', '49', '30', '36', '354', '353', '39', '7', '383', '371', '423', '370', '352', '389', '356', '373', '377', '382', '31', '47', '48', '351', '40', '7', '378', '381', '421', '386', '34', '46', '41', '90', '380', '44', '379'];
+      // Array dei codici telefonici delle nazioni dell'Unione Europea
+      const euCountryPhoneCodes = ['43', '32', '359', '385', '357', '420', '45', '372', '358', '33', '49', '30', '36', '353', '39', '371', '370', '352', '356', '31', '48', '351', '40', '421', '386', '34', '46'];
 
 
 
-  const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: 'array' });
-
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-    const csv = XLSX.utils.sheet_to_csv(worksheet);
-
-    Papa.parse(csv, {
-      complete: function (results) {
-        const outputData = [];
-
-        results.data.forEach((row, rowIndex) => {
-          const column5Value = row[5];
-
-          if (uniqueNumbers.includes(column5Value)) {
-            return;
-          }
-
-          uniqueNumbers.push(column5Value);
-        });
-
-        outputData.push([]);
-
-        results.data.forEach((row, rowIndex) => {
-          const column0Value = row[0];
-
-          if (column0Value !== 'DHL EXPRESS (ITALY) SRL') {
-            return;
-          }
-
-          if (row[18].includes('EXPRESS') && euCountryCodes.includes(row[12])){
-            row[18] = 'ECX';
-          }
-          else if(row[18].includes('EXPRESS') && !euCountryCodes.includes(row[12])){
-            row[18] = 'WPX';
-          }
-          else if (row[18].includes('CAMIONISTICO') && euCountryCodes.includes(row[12])){
-            row[18] = 'ESU';
-          }
-          else if(row[18].includes('CAMIONISTICO') && !euCountryCodes.includes(row[12])){
-            row[18] = 'ESI';
-          }
-
-          
-
-          const rowData = [];
+      const CountryCodes = ['AL', 'AD', 'AM', 'AT', 'AZ', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'GE', 'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'KZ', 'XK', 'LV', 'LI', 'LT', 'LU', 'MK', 'MT', 'MD', 'MC', 'ME', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SK', 'SI', 'ES', 'SE', 'CH', 'TR', 'UA', 'GB', 'VA'];
+      const CountryPhoneCodes = ['355', '376', '374', '43', '994', '375', '32', '387', '359', '385', '357', '420', '45', '372', '358', '33', '995', '49', '30', '36', '354', '353', '39', '7', '383', '371', '423', '370', '352', '389', '356', '373', '377', '382', '31', '47', '48', '351', '40', '7', '378', '381', '421', '386', '34', '46', '41', '90', '380', '44', '379'];
 
 
 
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-          fieldOrder.forEach((field, index) => {
-            let cellValue = '';
+      const reader = new FileReader();
 
-            if (field === 'x') {
-              cellValue = 'VALORE DA IMPOSTARE';
-            } else {
-              const columnIndex = field - 1;
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
 
-              if (field === 15 && row[index] && row[index].startsWith('+')) {
-                cellValue = row[index].substring(1); // Rimuovi il carattere '+'
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        const csv = XLSX.utils.sheet_to_csv(worksheet);
+
+        Papa.parse(csv, {
+          complete: function (results) {
+            const outputData = [];
+
+            results.data.forEach((row, rowIndex) => {
+              const column5Value = row[5];
+
+              if (uniqueNumbers.includes(column5Value)) {
+                return;
+              }
+
+              uniqueNumbers.push(column5Value);
+            });
+
+            outputData.push([]);
+
+            results.data.forEach((row, rowIndex) => {
+              const column0Value = row[0];
+
+              if (column0Value !== 'DHL EXPRESS (ITALY) SRL') {
+                return;
+              }
+
+              if (row[18].includes('EXPRESS') && euCountryCodes.includes(row[12])) {
+                row[18] = 'ECX';
+              }
+              else if (row[18].includes('EXPRESS') && !euCountryCodes.includes(row[12])) {
+                row[18] = 'WPX';
+              }
+              else if (row[18].includes('CAMIONISTICO') && euCountryCodes.includes(row[12])) {
+                row[18] = 'ESU';
+              }
+              else if (row[18].includes('CAMIONISTICO') && !euCountryCodes.includes(row[12])) {
+                row[18] = 'ESI';
               }
 
 
-              if (field === 'y' && row[13] && CountryCodes.includes(row[12])) {
-                const countryIndex = CountryCodes.indexOf(row[12]);
-                cellValue = CountryPhoneCodes[countryIndex];
-              } else {
-                cellValue = row[columnIndex] || '';
-              }
+
+              const rowData = [];
 
 
-              if (field === 1 && cellValue) {
-                cellValue = 'G';
-              }
 
-              if (field === 7 && cellValue) {
-                cellValue = '106968952';
-              }
 
-              if (field === 2 && cellValue) {
-                cellValue = 'EUR';
-              }
+              fieldOrder.forEach((field, index) => {
+                let cellValue = '';
 
-              if (field === 3 && cellValue) {
-                cellValue = 'N';
-              }
+                if (field === 'x') {
+                  cellValue = 'VALORE DA IMPOSTARE';
+                } else {
+                  const columnIndex = field - 1;
 
-              if (field === 4 && cellValue) {
-                cellValue = 60;
-              }
+                  if (field === 15 && row[index] && row[index].startsWith('+')) {
+                    cellValue = row[index].substring(1); // Rimuovi il carattere '+'
+                  }
 
-              if (field === 15 && cellValue == '') {
-                cellValue = '0000000000';
-              }
 
-              if (field === 21 && cellValue) {
-                cellValue = parseInt(cellValue);
-              }
+                  if (field === 'y' && row[13] && CountryCodes.includes(row[12])) {
+                    const countryIndex = CountryCodes.indexOf(row[12]);
+                    cellValue = CountryPhoneCodes[countryIndex];
+                  } else {
+                    cellValue = row[columnIndex] || '';
+                  }
 
-              if (field === 22 && cellValue) {
-                cellValue = parseInt(cellValue);
-              }
 
-              if (field === 16 && cellValue.includes(';')) {
-                cellValue = cellValue.split(';')[0];
-              }
+                  if (field === 1 && cellValue) {
+                    cellValue = 'G';
+                  }
 
+                  if (field === 7 && cellValue) {
+                    cellValue = '106968952';
+                  }
+
+                  if (field === 2 && cellValue) {
+                    cellValue = 'EUR';
+                  }
+
+                  if (field === 3 && cellValue) {
+                    cellValue = 'N';
+                  }
+
+                  if (field === 4 && cellValue) {
+                    cellValue = 60;
+                  }
+
+                  if (field === 15 && cellValue == '') {
+                    cellValue = '0000000000';
+                  }
+
+                  if (field === 21 && cellValue) {
+                    cellValue = parseInt(cellValue);
+                  }
+
+                  if (field === 22 && cellValue) {
+                    cellValue = parseInt(cellValue);
+                  }
+
+                  if (field === 16 && cellValue.includes(';')) {
+                    cellValue = cellValue.split(';')[0];
+                  }
+
+                }
+
+                rowData.push(cellValue);
+              });
+
+              outputData.push(rowData);
+
+              uniqueNumbers.splice(uniqueNumbers.indexOf(row[5]), 1);
+
+              outputData[0] = ['REFERENTE', ' ', ' ', ' ', 'CODICE NAZIONE (IT CE EN)', 'CODICE TELEFONO NAZIONE (+39 +41)', ' ', 'CODICE CLIENTE', ' ', 'VALUTA VALORE DICHIARATO', ' ', 'CODICE PRODOTTO', 'RIEPILOGO/DESCRIZIONE ORDINE', 'TIPO SPED', 'NUM COLLI', 'MAIL', 'CAP', 'LUNG COLLO', 'LARG COLLO', 'ALT COLLO', 'CONSEGNA SABATO'];
+
+
+            });
+
+            const exportFormat = document.getElementById('fileFormat').value;
+
+            if (exportFormat === 'xls') {
+              const outputWorkbook = XLSX.utils.book_new();
+              const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
+              XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
+
+              const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
+              saveFile(outputBuffer, 'output.xls');
+            } else if (exportFormat === 'csv') {
+              const csvContent = Papa.unparse(outputData);
+
+              saveFile(csvContent, 'output.csv');
             }
-
-            rowData.push(cellValue);
-          });
-
-          outputData.push(rowData);
-
-          uniqueNumbers.splice(uniqueNumbers.indexOf(row[5]), 1);
-
-          outputData[0] = ['REFERENTE', ' ', ' ', ' ', 'CODICE NAZIONE (IT CE EN)', 'CODICE TELEFONO NAZIONE (+39 +41)', ' ', 'CODICE CLIENTE', ' ', 'VALUTA VALORE DICHIARATO', ' ', 'CODICE PRODOTTO', 'RIEPILOGO/DESCRIZIONE ORDINE', 'TIPO SPED', 'NUM COLLI', 'MAIL', 'CAP', 'LUNG COLLO', 'LARG COLLO', 'ALT COLLO', 'CONSEGNA SABATO' ];
-        
-
+          }
         });
+      };
 
-        const exportFormat = document.getElementById('fileFormat').value;
-
-        if (exportFormat === 'xls') {
-          const outputWorkbook = XLSX.utils.book_new();
-          const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
-          XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
-
-          const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
-          saveFile(outputBuffer, 'output.xls');
-        } else if (exportFormat === 'csv') {
-          const csvContent = Papa.unparse(outputData);
-
-          saveFile(csvContent, 'output.csv');
-        }
-      }
-    });
-  };
-
-  reader.readAsArrayBuffer(file);
-}
+      reader.readAsArrayBuffer(file);
+    }
 
 
 
- 
+
 
 
 
@@ -272,15 +272,15 @@
 
               const rowData = [];
 
-selectedColumns.forEach(columnIndex => {
-  let cellValue = row[columnIndex] || '';
-  if (columnIndex === 20 || columnIndex === 21) {
-    cellValue = parseInt(cellValue, 10);
-  }
-  rowData.push(cellValue);
-});
+              selectedColumns.forEach(columnIndex => {
+                let cellValue = row[columnIndex] || '';
+                if (columnIndex === 20 || columnIndex === 21) {
+                  cellValue = parseInt(cellValue, 10);
+                }
+                rowData.push(cellValue);
+              });
 
-              
+
 
 
               // Aggiunge i valori delle colonne 50 e 83 solo se nella colonna 50 è presente "CONTRASSEGNO"
