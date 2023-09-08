@@ -27,7 +27,7 @@
     <button class="buttonD" onclick="DHL()">DHL</button>
 
     <br>
-    version 08.09 - 11:12
+    version 08.09 - 11:36
 
   </div>
 
@@ -35,7 +35,7 @@
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     function DHL() {
-      const fieldOrder = ['x', 9, 10, 12, 13, 'y', 15, 7, 22, 2, 6, 1, 'x', 19, 21, 16, 11, 18, 4, 4, 3, 5];
+      const fieldOrder = ['x', 10, 11, 13, 14, 'y', 16, 8, 23, 3, 7, 2, 'x', 20, 22, 17, 12, 19, 5, 5, 4, 6];
 
       const uniqueNumbers = [];
 
@@ -82,23 +82,23 @@
             outputData.push([]);
 
             results.data.forEach((row, rowIndex) => {
-              const column0Value = row[0];
+              const column0Value = row[1];
 
               if (column0Value !== 'DHL EXPRESS (ITALY) SRL') {
                 return;
               }
 
-              if (row[18].includes('EXPRESS') && euCountryCodes.includes(row[12])) {
-                row[18] = 'ECX';
+              if (row[19].includes('EXPRESS') && euCountryCodes.includes(row[13])) {
+                row[19] = 'ECX';
               }
-              else if (row[18].includes('EXPRESS') && !euCountryCodes.includes(row[12])) {
-                row[18] = 'WPX';
+              else if (row[19].includes('EXPRESS') && !euCountryCodes.includes(row[13])) {
+                row[19] = 'WPX';
               }
-              else if (row[18].includes('CAMIONISTICO') && euCountryCodes.includes(row[12])) {
-                row[18] = 'ESU';
+              else if (row[19].includes('CAMIONISTICO') && euCountryCodes.includes(row[13])) {
+                row[19] = 'ESU';
               }
-              else if (row[18].includes('CAMIONISTICO') && !euCountryCodes.includes(row[12])) {
-                row[18] = 'ESI';
+              else if (row[19].includes('CAMIONISTICO') && !euCountryCodes.includes(row[13])) {
+                row[19] = 'ESI';
               }
 
 
@@ -116,64 +116,64 @@
                 } else {
                   const columnIndex = field - 1;
 
-                  if (field === 15 && row[index] && row[index].startsWith('+')) {
+                  if (field === 16 && row[index] && row[index].startsWith('+')) {
                     cellValue = row[index].substring(1); // Rimuovi il carattere '+'
                   }
 
 
-                  if (field === 'y' && row[13] && CountryCodes.includes(row[12])) {
-                    const countryIndex = CountryCodes.indexOf(row[12]);
+                  if (field === 'y' && row[14] && CountryCodes.includes(row[13])) {
+                    const countryIndex = CountryCodes.indexOf(row[13]);
                     cellValue = CountryPhoneCodes[countryIndex];
                   } else {
                     cellValue = row[columnIndex] || '';
                   }
 
 
-                  if (field === 1 && cellValue) {
+                  if (field === 2 && cellValue) {
                     cellValue = 'G';
                   }
 
-                  if (field === 7 && cellValue) {
+                  if (field === 8 && cellValue) {
                     cellValue = '106968952';
                   }
 
-                  if (field === 2 && cellValue) {
+                  if (field === 3 && cellValue) {
                     cellValue = 'EUR';
                   }
 
-                  if (field === 3 && cellValue) {
+                  if (field === 4 && cellValue) {
                     cellValue = 'N';
                   }
 
-                  if (field === 4 && cellValue) {
+                  if (field === 5 && cellValue) {
                     cellValue = 40;
                   }
 
-                  if (field === 18 && cellValue) {
+                  if (field === 19 && cellValue) {
                     cellValue = 60;
                   }
 
-                  if (field === 15 && cellValue == '') {
+                  if (field === 16 && cellValue == '') {
                     cellValue = '0000000000';
-                  }
-
-                  if (field === 21 && cellValue) {
-                    cellValue = parseInt(cellValue);
                   }
 
                   if (field === 22 && cellValue) {
                     cellValue = parseInt(cellValue);
                   }
 
-                  if (field === 16 && cellValue.includes(';')) {
+                  if (field === 23 && cellValue) {
+                    cellValue = parseInt(cellValue);
+                  }
+
+                  if (field === 17 && cellValue.includes(';')) {
                     cellValue = cellValue.split(';')[0];
                   }
 
-                  if (field === 15 && cellValue.includes(')')) {
+                  if (field === 16 && cellValue.includes(')')) {
                     const indexOfClosingParenthesis = cellValue.indexOf(')');
                     cellValue = cellValue.substring(indexOfClosingParenthesis + 1);
                   }
-                  else if (field === 15 && cellValue.includes('+')) {
+                  else if (field === 16 && cellValue.includes('+')) {
                     const indexOfPlus = cellValue.indexOf('+');
                     cellValue = cellValue.substring(0, indexOfPlus) + cellValue.substring(indexOfPlus + 3);
                   }
@@ -187,7 +187,7 @@
 
               outputData.push(rowData);
 
-              uniqueNumbers.splice(uniqueNumbers.indexOf(row[5]), 1);
+              uniqueNumbers.splice(uniqueNumbers.indexOf(row[6]), 1);
 
               outputData[0] = ['REFERENTE', ' ', ' ', ' ', 'CODICE NAZIONE (IT CE EN)', 'CODICE TELEFONO NAZIONE (+39 +41)', ' ', 'CODICE CLIENTE', ' ', 'VALUTA VALORE DICHIARATO', ' ', 'CODICE PRODOTTO', 'RIEPILOGO/DESCRIZIONE ORDINE', 'TIPO SPED', 'NUM COLLI', 'MAIL', 'CAP', 'LUNG COLLO', 'LARG COLLO', 'ALT COLLO', 'CONSEGNA SABATO', 'CODICE FATTURA'];
 
