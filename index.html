@@ -288,8 +288,8 @@
 
               selectedColumns.forEach(columnIndex => {
                 let cellValue = row[columnIndex] || '';
-                if (columnIndex === 21 || columnIndex === 22) {
-                  cellValue = parseInt(cellValue, 10);
+                if (columnIndex === 22 || columnIndex === 23) {
+                  cellValue = parseInt(cellValue, 11);
                 }
                 rowData.push(cellValue);
               });
