@@ -27,7 +27,7 @@
     <button class="buttonD" onclick="DHL()">DHL</button>
 
     <br>
-    version 20.07 - 14:39
+    version 08.09 - 11:12
 
   </div>
 
@@ -251,7 +251,7 @@
         Papa.parse(csv, {
           complete: function (results) {
             // Array contenente gli indici delle colonne da estrarre
-            const selectedColumns = [8, 9, 10, 11, 12, 4, 6, 5, 21, 17, 20, 15, 14];
+            const selectedColumns = [9, 10, 11, 12, 13, 5, 7, 6, 22, 18, 21, 16, 15];
             const outputData = [];
 
             // Aggiungi riga vuota
@@ -259,7 +259,7 @@
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
-              const column5Value = row[5];
+              const column5Value = row[6];
 
               // Se il numero è già presente nell'array uniqueNumbers, salta la riga corrente
               if (uniqueNumbers.includes(column5Value)) {
@@ -275,12 +275,12 @@
 
             // Itera tutte le righe del CSV
             results.data.forEach((row, rowIndex) => {
-              const column5Value = row[5];
-              const column6Value = row[6];
-              const columnBEValue = row[17]; // Indice della colonna "BE" (contando da 0)
+              const column5Value = row[6];
+              const column6Value = row[7];
+              const columnBEValue = row[18]; // Indice della colonna "BE" (contando da 0)
 
               // Se il numero è già stato filtrato, salta la riga corrente
-              if (!uniqueNumbers.includes(column5Value) || !(row[0].includes("BRT"))) {
+              if (!uniqueNumbers.includes(column5Value) || !(row[1].includes("BRT"))) {
                 return;
               }
 
@@ -288,7 +288,7 @@
 
               selectedColumns.forEach(columnIndex => {
                 let cellValue = row[columnIndex] || '';
-                if (columnIndex === 20 || columnIndex === 21) {
+                if (columnIndex === 21 || columnIndex === 22) {
                   cellValue = parseInt(cellValue, 10);
                 }
                 rowData.push(cellValue);
@@ -310,25 +310,25 @@
                 }
                 else if (columnBEValue === "FRANCO") {
                   rowData[9] = 1;
-                  rowData[6] = '';
-                  rowData[7] = '';
+                  rowData[6] = ' ';
+                  rowData[7] = ' ';
                 } else if (columnBEValue === "ASSEGNATO") {
                   rowData[9] = 2;
-                  rowData[6] = '';
-                  rowData[7] = '';
+                  rowData[6] = ' ';
+                  rowData[7] = ' ';
                 }
               } else {
                 rowData[6] = column6Value;
-                rowData[7] = row[5];
+                rowData[7] = row[65];
               }
 
               rowData[5] = parseInt(rowData[5]);
 
-              if (rowData[7] !== '') {
+              if (rowData[7] !== ' ') {
                 rowData[7] = parseFloat(rowData[7]);
               }
               else {
-                rowData[7] = '';
+                rowData[7] = ' ';
               }
 
 
