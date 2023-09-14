@@ -27,7 +27,7 @@
     <button class="buttonD" onclick="DHL()">DHL</button>
 
     <br>
-    version 08.09 - 13:10
+    version 14.09 20:00
 
   </div>
 
@@ -301,7 +301,7 @@
               if (rowIndex !== 0) {
                 if (column6Value === "CONTRASSEGNO") {
                   rowData[6] = 'TP';
-                  rowData[7] = row[5];
+                  rowData[7] = row[6];
                   if (columnBEValue === "FRANCO") {
                     rowData[9] = 4;
                   } else if (columnBEValue === "ASSEGNATO") {
@@ -318,7 +318,7 @@
                   rowData[7] = '';
                 }
               } else {
-                rowData[6] = column6Value;
+                rowData[6] = rowData[8];
                 rowData[7] = row[65];
               }
 
