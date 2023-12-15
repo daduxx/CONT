@@ -1,17 +1,18 @@
         body {
-            background-color: rgb(255, 255, 255);
+            background-color: rgb(95, 10, 10);
             color: rgb(0, 0, 0);
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             display: flex;
             justify-content: center;
             height: 70vh;
             align-items: center;
             margin: 0;
+            font-size: 20px;
         }
 
         .container {
             text-align: center;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             padding: 20px;
             background-color: #e3e3e3;
             border-radius: 5px;
@@ -20,19 +21,19 @@
 
         button {
             background-color: red;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 3px;
-            font-size: 16px;
+            font-size: 20px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         .buttonC {
             background-color: red;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -44,7 +45,7 @@
 
         .buttonD {
             background-color: #f1c232;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -60,7 +61,7 @@
 
         input[type="file"], button {
               background-color: none;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Catamaran', sans-serif;
             color: black;
             border: solid 2px white;
             padding: 8px 16px;
@@ -74,4 +75,26 @@
           width: 250px;
         }
 
-        
+        @keyframes blink {
+            0% {
+              opacity: 0.2; /* Luminosità al 20% all'inizio dell'animazione */
+            }
+            50% {
+              opacity: 1; /* Luminosità al 100% a metà dell'animazione */
+            }
+            100% {
+              opacity: 0.2; /* Luminosità al 20% alla fine dell'animazione */
+            }
+          }
+          
+          .light {
+            font-size: 20px;
+            color: #ff0000; /* Colore del neon, adatta secondo le tue preferenze */
+            animation: blink 1s infinite; /* Animazione che dura 1 secondo, si ripete infinite volte */
+          }
+
+          .version {
+            font-size: 15px;
+          }
+          
+          
