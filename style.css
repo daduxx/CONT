@@ -1,5 +1,5 @@
-        body {
-            background-color: rgb(95, 10, 10);
+            body {
+            background-color: rgb(221, 221, 221);
             color: rgb(0, 0, 0);
             font-family: 'Catamaran', sans-serif;
             display: flex;
@@ -96,5 +96,3 @@
           .version {
             font-size: 15px;
           }
-          
-          
