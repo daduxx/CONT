@@ -1,98 +1,118 @@
-            body {
-            background-color: rgb(221, 221, 221);
-            color: rgb(0, 0, 0);
-            font-family: 'Catamaran', sans-serif;
-            display: flex;
-            justify-content: center;
-            height: 70vh;
-            align-items: center;
-            margin: 0;
-            font-size: 20px;
-        }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;800&display=swap');
 
-        .container {
-            text-align: center;
-            font-family: 'Catamaran', sans-serif;
-            padding: 20px;
-            background-color: #e3e3e3;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            background-color: red;
-            font-family: 'Catamaran', sans-serif;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 3px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .buttonC {
-            background-color: red;
-            font-family: 'Catamaran', sans-serif;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 3px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.8s ease;
-        }
-
-        .buttonD {
-            background-color: #f1c232;
-            font-family: 'Catamaran', sans-serif;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 3px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.8s ease;
-        }
-
-        button:hover {
-            background-color: #383838;
-        }
-
-        input[type="file"], button {
-              background-color: none;
-            font-family: 'Catamaran', sans-serif;
-            color: black;
-            border: solid 2px white;
-            padding: 8px 16px;
-            border-radius: 3px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+body {
+    background-color: #f4f4f9;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-size: 18px;
+    overflow: hidden;
 }
 
-        .image-container {
-          width: 250px;
-        }
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    width: 420px;
+    text-align: center;
+    animation: fadeIn 1.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    transition: filter 0.5s ease; /* Aggiunto per l'effetto blur */
+}
 
-        @keyframes blink {
-            0% {
-              opacity: 0.2; /* Luminosità al 20% all'inizio dell'animazione */
-            }
-            50% {
-              opacity: 1; /* Luminosità al 100% a metà dell'animazione */
-            }
-            100% {
-              opacity: 0.2; /* Luminosità al 20% alla fine dell'animazione */
-            }
-          }
-          
-          .light {
-            font-size: 20px;
-            color: #ff0000; /* Colore del neon, adatta secondo le tue preferenze */
-            animation: blink 1s infinite; /* Animazione che dura 1 secondo, si ripete infinite volte */
-          }
+button {
+    background-color: #4CAF50;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
 
-          .version {
-            font-size: 15px;
-          }
+button:hover {
+    background-color: #383838;
+    color: #f0f0f0;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.buttonC {
+    background-color: #e74c3c;
+}
+
+.buttonD {
+    background-color: #f39c12;
+}
+
+.buttonS {
+    background-color: #e4c200;
+}
+
+input[type="file"], select {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin: 10px 0;
+    width: 100%;
+}
+
+input[type="file"]:hover, select:hover {
+    border-color: #bbb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    width: 250px;
+    margin-bottom: 20px;
+    transition: transform 1.5s ease; /* Aggiunta transizione per zoom e filtro */
+
+}
+
+button:disabled {
+  background-color: #ccc; /* Colore grigio per indicare che è disabilitato */
+  color: #999;
+  cursor: not-allowed; /* Cambia il cursore per indicare che non è cliccabile */
+  box-shadow: none; /* Rimuovi l'ombra per il pulsante disabilitato */
+  opacity: 0.7;
+}
+
+
+.image-container:hover {
+    transform: scale(1.2); /* Ingrandimento progressivo dell'immagine */
+}
+
+
+.light {
+    font-size: 20px;
+    color: #ff0000;
+    animation: blink 1s infinite;
+}
+
+.version {
+    font-size: 14px;
+    color: #999;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
