@@ -67,7 +67,7 @@ input[type="file"], select {
     cursor: pointer;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     margin: 10px 0;
-    width: 100%;
+    width: 300px;
 }
 
 input[type="file"]:hover, select:hover {
