@@ -33,7 +33,7 @@
     <button class="buttonS" onclick="SDA()">SDA</button>
 
     <br>
-    <p class="version">version 09.10 10:10</p>
+    <p class="version">version 09.10 16:35</p>
 
   </div>
 
@@ -225,99 +225,109 @@
 
 
 
-
     function SDA() {
-      const fieldOrder = [8, '?', 10, 12, 11, 15, 16, 13, 14, '?', '?', '?', '?', '?', '?', '?', 15, '?', '?', '?', '?', '?'];
-      const uniqueNumbers = [];
-      const outputData = [];
+  const fieldOrder = [8, '?', 10, 12, 11, 15, 16, 13, 'ITA', '?', '?', '?', '?', '?', '?', '?', 15, '?', '?', '?', '?', '?'];
+  const uniqueNumbers = [];
+  const outputData = [];
 
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
 
-      const reader = new FileReader();
+  const reader = new FileReader();
 
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const csv = XLSX.utils.sheet_to_csv(worksheet);
+  reader.onload = function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
 
-        Papa.parse(csv, {
-          complete: function (results) {
-            // Estrae i valori unici dalla colonna 5
-            results.data.forEach((row) => {
-              const column5Value = row[5];
-              if (!uniqueNumbers.includes(column5Value)) {
-                uniqueNumbers.push(column5Value);
-              }
-            });
-
-            // Header personalizzato
-            outputData.push([
-              "RagioneSociale",
-              "Referente",
-              "Indirizzo",
-              "Localita",
-              "CAP",
-              "Telefono",
-              "EMail",
-              "Provincia",
-              "Stato",
-              "TipoIndirizzo",
-              "FlagRitiro",
-              "FlagNazionale",
-              "FlagAttivo",
-              "CodiceRicerca",
-              "GruppoUtenti",
-              "Fax",
-              "Cellulare",
-              "CodiceFiscale",
-              "PartitaIVA",
-              "IdFiscale",
-              "UserName",
-              "IdCliente"
-            ]);
-
-            // Iniziare a iterare dalla seconda riga (indice 1)
-            results.data.forEach((row, index) => {
-              // Salta la prima riga
-              if (index === 0) return;
-
-              const rowData = [];
-
-              fieldOrder.forEach((field) => {
-                let cellValue = '';
-                if (field === '?') {
-                  cellValue = ''; // Campo vuoto se è '?'
-                } else {
-                  const columnIndex = field; // Uso direttamente l'indice dal fieldOrder
-                  cellValue = row[columnIndex] || ''; // Ritorna il valore o vuoto
-                }
-                rowData.push(cellValue);
-              });
-
-              outputData.push(rowData);
-            });
-
-            // Determina il formato di esportazione
-            const exportFormat = document.getElementById('fileFormat').value;
-            if (exportFormat === 'xls') {
-              const outputWorkbook = XLSX.utils.book_new();
-              const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
-              XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
-              const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
-              saveFile(outputBuffer, 'output_SDA.xls');
-            } else if (exportFormat === 'csv') {
-              const csvContent = Papa.unparse(outputData);
-              saveFile(csvContent, 'output_SDA.csv');
-            }
+    Papa.parse(csv, {
+      complete: function (results) {
+        // Estrae i valori unici dalla colonna 5
+        results.data.forEach((row) => {
+          const column5Value = row[5];
+          if (!uniqueNumbers.includes(column5Value)) {
+            uniqueNumbers.push(column5Value);
           }
         });
-      };
 
-      reader.readAsArrayBuffer(file);
-    }
+        // Header personalizzato
+        outputData.push([
+          "RagioneSociale",
+          "Referente",
+          "Indirizzo",
+          "Localita",
+          "CAP",
+          "Telefono",
+          "EMail",
+          "Provincia",
+          "Stato",
+          "TipoIndirizzo",
+          "FlagRitiro",
+          "FlagNazionale",
+          "FlagAttivo",
+          "CodiceRicerca",
+          "GruppoUtenti",
+          "Fax",
+          "Cellulare",
+          "CodiceFiscale",
+          "PartitaIVA",
+          "IdFiscale",
+          "UserName",
+          "IdCliente"
+        ]);
 
+        // Iniziare a iterare dalla seconda riga (indice 1)
+        results.data.forEach((row, index) => {
+          // Salta la prima riga
+          if (index === 0) return;
+
+          const rowData = [];
+
+          fieldOrder.forEach((field, fieldIndex) => {
+            let cellValue = '';
+            if (field === '?') {
+              cellValue = ''; // Campo vuoto se è '?'
+            } else if (field === 'ITA') {
+              cellValue = 'ITA'; // Inserisce ITA se richiesto
+            } else {
+              const columnIndex = field; // Uso direttamente l'indice dal fieldOrder
+              cellValue = row[columnIndex] || ''; // Ritorna il valore o vuoto
+              
+              // Gestisce la colonna 16 per prendere solo la prima email
+              if (fieldIndex === 6 && cellValue.includes(';')) {
+                cellValue = cellValue.split(';')[0]; // Prende solo la prima email
+              }
+
+              // Sostituisce i ';' con uno spazio in tutti i campi
+              cellValue = cellValue.replace(/;/g, ' ');
+            }
+            rowData.push(cellValue);
+          });
+
+          outputData.push(rowData);
+        });
+
+        // Determina il formato di esportazione
+        const exportFormat = document.getElementById('fileFormat').value;
+        if (exportFormat === 'xls') {
+          const outputWorkbook = XLSX.utils.book_new();
+          const outputWorksheet = XLSX.utils.aoa_to_sheet(outputData);
+          XLSX.utils.book_append_sheet(outputWorkbook, outputWorksheet, 'Sheet 1');
+          const outputBuffer = XLSX.write(outputWorkbook, { type: 'array', bookType: 'xls' });
+          saveFile(outputBuffer, 'output_SDA.xls');
+        } else if (exportFormat === 'csv') {
+          const csvContent = Papa.unparse(outputData, {
+            delimiter: ';' // Specifica il punto e virgola come delimitatore
+          });
+          saveFile(csvContent, 'output_SDA.csv');
+        }
+      }
+    });
+  };
+
+  reader.readAsArrayBuffer(file);
+}
 
 
 
