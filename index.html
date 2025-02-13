@@ -31,10 +31,10 @@
     <button class="buttonC" onclick="processFile()">BRT</button>
     <button class="buttonD" onclick="DHL()">DHL</button>
     <button class="buttonS" onclick="SDA()">SDA</button>
-    <button class="buttonF" onclick="FedEx()" disabled title="Non ancora disponibile" >FedEx</button>
+    <button class="buttonF" onclick="FedEx()">FedEx</button>
 
     <br>
-    <p class="version">version 13.02 12:10</p>
+    <p class="version">version 13.02 16:00</p>
 
   </div>
 
@@ -343,7 +343,7 @@
 
 
     function FedEx() {
-      const fieldOrder = [8, '?', 10, 12, 11, 15, 16, 13, 'ITA', '?', '?', '?', '?', '?', '?', '?', 15, '?', '?', '?', '?', '?'];
+      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'contabilita@fiorenzosport.it', 'Strada Carpice, 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", '?', '?'];
       const uniqueNumbers = [];
       const outputData = [];
 
@@ -370,34 +370,36 @@
 
             // Header personalizzato
             outputData.push([
-              "reference",
-              "senderContactName",
-              "senderCompany",
-              "senderContactNumber",
-              "senderEmail",
-              "senderLine1",
-              "senderPostcode",
-              "senderState",
-              "senderCity",
-              "senderCountry",
-              "recipientContactName",
-              "recipientCompany",
-              "recipientContactNumber",
-              "recipientEmail",
-              "recipientLine1",
-              "recipientLine2",
-              "recipientPostcode",
-              "recipientState",
-              "recipientCity",
-              "recipientCountry",
-              "packageType",
+              "reference", // ?
+              "senderContactName", // Fiorenzo
+              "senderCompany", // Fiorenzo Digital Teamwear
+              "senderContactNumber", // +39 011 646 7463
+              "senderEmail", // contabilita@fiorenzosport.it
+              "senderLine1", // Strada Carpice, 37/6, 10024 Moncalieri TO
+              "senderPostcode", // 10024
+              "senderState", // TO
+              "senderCity", // Moncalieri
+              "senderCountry", // IT
+              "recipientContactName", // 7 
+              "recipientCompany", // 7
+              "recipientContactNumber", // 14
+              "recipientEmail", // 15
+              "recipientLine1", // 10
+              "recipientPostcode", // 11
+              "recipientState", // 14
+              "recipientCity", // 12
+              "recipientCountry", //ITA
+              "packageType", // 01
               "numberOfPackages", // TotNumeroColli
               "packageWeight", // TotPesoLordo
-              "weightUnits",
-              "length",
-              "width",
-              "height",
-              "currencyType"
+              "weightUnits", // KGS
+              "currencyType", // EUR
+              "serviceType", // exp = FEDEX_INTERNATIONAL_PRIORITY  | cam = FEDEX_REGIONAL_ECONOMY
+              "manufacturingCountry",
+              "itemDescription",
+              "commodityQuantity",
+              "commodityMeasureUnit"
+
             ]);
 
             // Iniziare a iterare dalla seconda riga (indice 1)
@@ -411,6 +413,116 @@
                 let cellValue = '';
                 if (field === '?') {
                   cellValue = ''; // Campo vuoto se è '?'
+                } else if (field == 15) {
+                  cellValue = row[15].split(" ")[0];
+                } else if (field == 'YOUR_PACKAGING') {
+                  if (row[19].includes('EXP')) {
+                    cellValue = "FEDEX_PAK";
+                  } else {
+                    cellValue = "YOUR_PACKAGING";
+                  }
+                } else if (field == 21) {
+                  cellValue = Number(row[21]);
+                } else if (field == 22) {
+                  cellValue = Number(row[22]);
+                } else if (field == 'codice') {
+
+                  if (row[14].includes('ALBANIA')) {
+                    cellValue = 'AL';
+                  } else if (row[14].includes('AUSTRIA')) {
+                    cellValue = 'AT';
+                  } else if (row[14].includes('BELGIO')) {
+                    cellValue = 'BE';
+                  } else if (row[14].includes('BULGARIA')) {
+                    cellValue = 'BG';
+                  } else if (row[14].includes('BURKINA FASO')) {
+                    cellValue = 'BF';
+                  } else if (row[14].includes('REPUBBLICA CECA')) {
+                    cellValue = 'CZ';
+                  } else if (row[14].includes('DANIMARCA')) {
+                    cellValue = 'DK';
+                  } else if (row[14].includes('ESTONIA')) {
+                    cellValue = 'EE';
+                  } else if (row[14].includes('FINLANDIA')) {
+                    cellValue = 'FI';
+                  } else if (row[14].includes('FRANCIA')) {
+                    cellValue = 'FR';
+                  } else if (row[14].includes('GERMANIA')) {
+                    cellValue = 'DE';
+                  } else if (row[14].includes('GRECIA')) {
+                    cellValue = 'GR';
+                  } else if (row[14].includes('IRLANDA')) {
+                    cellValue = 'IE';
+                  } else if (row[14].includes('ITALIA')) {
+                    cellValue = 'IT';
+                  } else if (row[14].includes('LETTONIA')) {
+                    cellValue = 'LV';
+                  } else if (row[14].includes('LITUANIA')) {
+                    cellValue = 'LT';
+                  } else if (row[14].includes('LUSSEMBURGO')) {
+                    cellValue = 'LU';
+                  } else if (row[14].includes('MALTA')) {
+                    cellValue = 'MT';
+                  } else if (row[14].includes('NORVEGIA')) {
+                    cellValue = 'NO';
+                  } else if (row[14].includes('PAESI BASSI')) {
+                    cellValue = 'NL';
+                  } else if (row[14].includes('POLONIA')) {
+                    cellValue = 'PL';
+                  } else if (row[14].includes('PORTOGALLO')) {
+                    cellValue = 'PT';
+                  } else if (row[14].includes('REGNO UNITO')) {
+                    cellValue = 'GB';
+                  } else if (row[14].includes('ROMANIA')) {
+                    cellValue = 'RO';
+                  } else if (row[14].includes('SAN MARINO')) {
+                    cellValue = 'SM';
+                  } else if (row[14].includes('SERBIA')) {
+                    cellValue = 'RS';
+                  } else if (row[14].includes('SLOVACCHIA')) {
+                    cellValue = 'SK';
+                  } else if (row[14].includes('SLOVENIA')) {
+                    cellValue = 'SI';
+                  } else if (row[14].includes('SPAGNA')) {
+                    cellValue = 'ES';
+                  } else if (row[14].includes('SVIZZERA')) {
+                    cellValue = 'CH';
+                  } else if (row[14].includes('SVEZIA')) {
+                    cellValue = 'SE';
+                  } else if (row[14].includes('TURCHIA')) {
+                    cellValue = 'TR';
+                  } else if (row[14].includes('UNGHERIA')) {
+                    cellValue = 'HU';
+                  } else if (row[14].includes('UCRAINA')) {
+                    cellValue = 'UA';
+                  } else if (row[14].includes('ISLANDA')) {
+                    cellValue = 'IS';
+                  } else if (row[14].includes('CROAZIA')) {
+                    cellValue = 'HR';
+                  } else if (row[14].includes('BOSNIA ED ERZEGOVINA')) {
+                    cellValue = 'BA';
+                  } else if (row[14].includes('MACEDONIA DEL NORD')) {
+                    cellValue = 'MK';
+                  } else if (row[14].includes('MOLDAVIA')) {
+                    cellValue = 'MD';
+                  } else if (row[14].includes('MONTENEGRO')) {
+                    cellValue = 'ME';
+                  } else if (row[14].includes('ANDORRA')) {
+                    cellValue = 'AD';
+                  } else if (row[14].includes('LIECHTENSTEIN')) {
+                    cellValue = 'LI';
+                  } else if (row[14].includes('VATICANO')) {
+                    cellValue = 'VA';
+                  }
+
+                } else if (field == "type") {
+                  if (row[19].includes('EXP')) {
+                    cellValue = "FEDEX_INTERNATIONAL_PRIORITY";
+                  } else if (row[19].includes('CAM')) {
+                    cellValue = "FEDEX_REGIONAL_ECONOMY";
+                  } else {
+                    cellValue = '?';
+                  }
                 } else if (typeof field === "string") {
                   cellValue = field; // Inserisce ITA se richiesto
                 } else {
