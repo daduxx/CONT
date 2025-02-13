@@ -40,7 +40,7 @@ button {
 }
 
 button:hover {
-    background-color: #383838;
+    background-color: #203777;
     color: #f0f0f0;
     transform: scale(1.1);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -56,6 +56,12 @@ button:hover {
 
 .buttonS {
     background-color: #e4c200;
+    color: #333;
+}
+
+.buttonF {
+    background-color: #5000e4;
+    color: #fff;
 }
 
 input[type="file"], select {
