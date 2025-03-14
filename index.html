@@ -34,7 +34,7 @@
     <button class="buttonF" onclick="FedEx()">FedEx</button>
 
     <br>
-    <p class="version">version 14.03 13:00</p>
+    <p class="version">version 14.03 14:53</p>
 
   </div>
 
@@ -339,7 +339,7 @@
 
 
     function FedEx() {
-      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'clienti@fiorenzosport.com', 'Strada Carpice 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", 21, 22, 'KGS', 'data', 'line2', 5, 'N', 'SOLD', '?'];
+      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'clienti@fiorenzosport.com', 'Strada Carpice 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", 21, 22, 'KGS', 'data', 'line2', 5, 'N', 'SOLD', '?', 6, 'BUSINESS_DOCUMENT'];
 
       let line2 = '';
       const uniqueNumbers = [];
@@ -403,9 +403,17 @@
               "invoiceNumber",
               "etdEnabled",
               "purposeOfShipment",
-              "senderLine2"
+              "senderLine2",
+              "customsValue",
+              "documentType"
 
             ]);
+
+
+            /*
+1. electronicTradeDocuments.customsInvoiceDocument: is missing but it is required. 2. commodityInformation.commodities[0].value: is missing but it is required. 3. serviceDetails.serviceType: does not have a value in the enumeration []. 4. to[0].contact.email: does not match the email pattern must be a valid RFC 5321 Mailbox. 5. commodityInformation.commodities[0].value: Invalid value for BigDecimal: 'BONIFICO BANCARIO RICEVIMENTO FATT.'.
+
+*/
 
             // Iniziare a iterare dalla seconda riga (indice 1)
             results.data.forEach((row, index) => {
