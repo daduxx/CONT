@@ -34,7 +34,7 @@
     <button class="buttonF" onclick="FedEx()">FedEx</button>
 
     <br>
-    <p class="version">version 14.03 12:48</p>
+    <p class="version">version 14.03 13:00</p>
 
   </div>
 
@@ -417,7 +417,17 @@
               fieldOrder.forEach((field, fieldIndex) => {
                 let cellValue = '';
                 if (field === 'data') {
-                  cellValue = row[0].split('/').reverse().join('');
+
+                  let parts = row[0].split('/'); // Divide la data in [giorno, mese, anno]
+
+                  let day = parts[0].padStart(2, '0');  // Assicura due cifre per il giorno
+                  let month = parts[1].padStart(2, '0'); // Assicura due cifre per il mese
+                  let year = parts[2].length === 2 ? '20' + parts[2] : parts[2]; // Converte '25' in '2025'
+
+                  cellValue = year + month + day; // Unisce i valori nel formato YYYYMMDD
+
+                  console.log(row[0]);
+                  console.log(cellValue);
                 } else if (field === 10) {
                   /* se il campo è più lungo di 30 caratteri mi deve spezzettare la stringa ma in modo intelligente (non tagliando le parole), salvando in una */
                   if (row[10].length > 30) {
