@@ -34,7 +34,7 @@
     <button class="buttonF" onclick="FedEx()">FedEx</button>
 
     <br>
-    <p class="version">version 13.02 16:00</p>
+    <p class="version">version 14.03 11:40</p>
 
   </div>
 
@@ -222,10 +222,6 @@
       reader.readAsArrayBuffer(file);
     }
 
-
-
-
-
     function SDA() {
       const fieldOrder = [8, '?', 10, 12, 11, 15, 16, 13, 'ITA', '?', '?', '?', '?', '?', '?', '?', 15, '?', '?', '?', '?', '?'];
       const uniqueNumbers = [];
@@ -343,7 +339,9 @@
 
 
     function FedEx() {
-      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'contabilita@fiorenzosport.it', 'Strada Carpice, 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", '?', '?'];
+      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'clienti@fiorenzosport.com', 'Strada Carpice 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", 21, 22, 'KGS', 'data', 'line2', 5, 'N'];
+
+      let line2 = '';
       const uniqueNumbers = [];
       const outputData = [];
 
@@ -398,7 +396,12 @@
               "manufacturingCountry",
               "itemDescription",
               "commodityQuantity",
-              "commodityMeasureUnit"
+              "commodityWeight",
+              "commodityMeasureUnit",
+              "shipDate",
+              "recipientLine2",
+              "invoiceNumber",
+              "etdEnabled"
 
             ]);
 
@@ -411,7 +414,53 @@
 
               fieldOrder.forEach((field, fieldIndex) => {
                 let cellValue = '';
-                if (field === '?') {
+                if (field === 'data') {
+                  // from '12/03/2025' to '20250312'
+                  cellValue = row[0].split('/').reverse().join('');
+                  cellValue = cellValue.replace('/', ''); // Rimuove gli slash
+                } else if (field === 10) {
+                  /* se il campo è più lungo di 30 caratteri mi deve spezzettare la stringa ma in modo intelligente (non tagliando le parole), salvando in una */
+                  if (row[10].length > 30) {
+                    const words = row[10].split(' ');
+                    let line1 = '';
+                    for (let i = 0; i < words.length; i++) {
+                      if (line1.length + words[i].length < 30) {
+                        line1 += words[i] + ' ';
+                      } else {
+                        line2 += words[i] + ' ';
+                      }
+                    }
+                    cellValue = line1;
+                  } else {
+                    cellValue = row[10];
+                  }
+
+
+
+
+
+                } else if (field === 'line2') {
+                  if (line2 != '') {
+                    cellValue = line2;
+                  } else {
+                    cellValue = '';
+                  }
+                } else if (field === 'N') {
+                  if (row[14].includes('SVIZZERA')) {
+                    cellValue = 'Y';
+                  } else {
+                    cellValue = 'N';
+                  }
+                }
+                else if (field === 16) {
+                  // nel campo 16 c'è la email, ma è possibile che ce ne siano due, prendi la prima (le mail sono separate da punti e virgola)
+                  if (row[16].includes(';')) {
+                    cellValue = row[16].split(';')[0];
+                  } else {
+                    cellValue = row[16];
+                  }
+                }
+                else if (field === '?') {
                   cellValue = ''; // Campo vuoto se è '?'
                 } else if (field == 15) {
                   cellValue = row[15].split(" ")[0];
