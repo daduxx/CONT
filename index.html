@@ -34,7 +34,7 @@
     <button class="buttonF" onclick="FedEx()">FedEx</button>
 
     <br>
-    <p class="version">version 14.03 12:20</p>
+    <p class="version">version 14.03 12:48</p>
 
   </div>
 
@@ -339,7 +339,7 @@
 
 
     function FedEx() {
-      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'clienti@fiorenzosport.com', 'Strada Carpice 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", 21, 22, 'KGS', 'data', 'line2', 5, 'N', 'SOLD'];
+      const fieldOrder = ['Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', 'Fiorenzo Digital Teamwear', '+39 011 646 7463', 'clienti@fiorenzosport.com', 'Strada Carpice 37/6', '10024', 'TO', 'Moncalieri', 'IT', 9, 9, 15, 16, 10, 11, 'codice', 12, 'codice', 'YOUR_PACKAGING', 21, 22, 'KGS', 'EUR', 'type', 'IT', "Sportswear/Bags (SEE ATTACHED INVOICE)", 21, 22, 'KGS', 'data', 'line2', 5, 'N', 'SOLD', '?'];
 
       let line2 = '';
       const uniqueNumbers = [];
@@ -402,7 +402,8 @@
               "recipientLine2",
               "invoiceNumber",
               "etdEnabled",
-              "purposeOfShipment"
+              "purposeOfShipment",
+              "senderLine2"
 
             ]);
 
@@ -416,9 +417,7 @@
               fieldOrder.forEach((field, fieldIndex) => {
                 let cellValue = '';
                 if (field === 'data') {
-                  // from '12/03/2025' to '20250312'
                   cellValue = row[0].split('/').reverse().join('');
-                  cellValue = cellValue.replace('/', ''); // Rimuove gli slash
                 } else if (field === 10) {
                   /* se il campo è più lungo di 30 caratteri mi deve spezzettare la stringa ma in modo intelligente (non tagliando le parole), salvando in una */
                   if (row[10].length > 30) {
