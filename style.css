@@ -26,6 +26,12 @@ body {
     transition: filter 0.5s ease; /* Aggiunto per l'effetto blur */
 }
 
+.container-buttons {
+    background-color: #ffffff;
+    margin: 0 auto;
+    gap: 30px;
+}
+
 button {
     background-color: #4CAF50;
     font-family: 'Poppins', sans-serif;
@@ -37,6 +43,7 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin: .5rem .5rem;
 }
 
 button:hover {
@@ -54,7 +61,7 @@ button:hover {
     background-color: #f39c12;
 }
 
-.buttonS {
+.buttonG {
     background-color: #e4c200;
     color: #333;
 }
